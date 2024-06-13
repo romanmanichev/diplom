@@ -1,0 +1,131 @@
+{% extends "users/base.html" %}
+{% load spurl %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+    <div class="content">
+
+        <div class="container">
+
+                <form class="search__filters" method="POST">
+                    {% csrf_token %}
+
+                    <div>
+                        <div>По дате:</div>
+                        <select name="date" class="search__date">
+
+                            {% for date, val in date_of_list.items %}
+
+                                {% if val == selected_date %}
+                                    <option selected value="{{ val }}">{{ date }}</option>
+                                {% else %}
+                                    <option value="{{ val }}">{{ date }}</option>
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div>
+                        <div>По категорий:</div>
+                        <select name="cat" class="search__category">
+                            <option value="0">не выбрано</option>
+                            {% for cat in categories %}
+                                {% if cat.pk == selected_cat %}
+                                    <option selected value="{{ cat.pk }}">{{ cat.name }}</option>
+                                {% else %}
+                                    <option value="{{ cat.pk }}">{{ cat.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <input type="text" name="search" class="search__searcher" value="{{ search }}">
+                        <button class="btn">искать</button>
+                    </div>
+
+                </form> <!-- /.search__filters -->
+                
+                <div class="search__results">
+
+                    <div>Найдено записей: {{ results.paginator.count }}</div>
+
+                    <div style="margin-top: 20px; text-align: center;">
+
+                        {% if results.has_other_pages %}
+
+                            {% if results.has_previous %}
+                                <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ results.previous_page_number }}' %}" class="btn">&lt;</a>
+                            {% endif %}
+
+                            {% for p in results.paginator.page_range %}
+
+                                {% if results.number == p %}
+                                    <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn" style="background-color: #ccc;">{{ p }}</a>
+                                {% elif p >= results.number|add:-2 and p <= results.number|add:2 %}
+                                    <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn">{{ p }}</a>
+                                {% endif %}
+                                
+                            {% endfor %}
+
+                            {% if results.has_next %}
+                                <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ results.next_page_number }}' %}" class="btn">&gt;</a>
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                    {% for article in results %}
+
+                        <div class="theme">
+
+                            <div class="theme__info">
+                                <div>{{ article.time_create|date:"Y-m-d" }}</div>
+                                <div>Количество ответов: {{ article.count }}</div>
+                            </div>
+
+                            <div class="theme__content">
+                                {{ article.title|truncatechars:75 }}
+                                <a href="{{ article.get_absolute_url }}" class="btn">открыть</a>
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                    <div style="margin-top: 20px; text-align: center;">
+
+                        {% if results.has_other_pages %}
+
+                            {% if results.has_previous %}
+                                <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ results.previous_page_number }}' %}" class="btn">&lt;</a>
+                            {% endif %}
+
+                            {% for p in results.paginator.page_range %}
+
+                                {% if results.number == p %}
+                                    <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn" style="background-color: #ccc;">{{ p }}</a>
+                                {% elif p >= results.number|add:-2 and p <= results.number|add:2 %}
+                                    <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn">{{ p }}</a>
+                                {% endif %}
+                                
+                            {% endfor %}
+
+                            {% if results.has_next %}
+                                <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ results.next_page_number }}' %}" class="btn">&gt;</a>
+                            {% endif %}
+
+                        {% endif %}
+                    </div>
+                    
+                </div>
+        </div>
+    </div> <!-- /.content -->
+
+{% endblock %}

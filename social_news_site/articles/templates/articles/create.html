@@ -1,0 +1,54 @@
+{% extends "users/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+    <div class="content">
+
+        <div class="container">
+
+            <form method="POST" class="create__theme">
+                {% csrf_token %}
+
+                <div class="create__element">
+                    <div>Категория:</div>
+
+                    <select class="create__category" id="category" name="category">
+                        <option value="0">не выбрано</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.pk }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="create__category__error create__error"></span>
+
+                </div>
+
+                
+                <div class="create__element">
+                    <div>Заголовок:</div>
+
+                    <input name="title" maxlength="100" class="create__title" type="text">
+                    <span class="create__title__error create__error"></span>
+                </div>
+
+                <div class="create__element">
+                    <div>Содержание:</div>
+
+                    <textarea name="content" maxlength="2000" class="create__content"></textarea>
+                    <span class="create__content__error create__error"></span>
+                </div>
+
+                <div class="create__element">
+                    <div>Код:</div>
+
+                    <textarea name="code" maxlength="10000" class="create__code"></textarea>
+                </div>
+                <button class="btn">Создать</button>
+            </form>
+                
+        </div>
+    </div> <!-- /.content -->
+
+{% endblock %}

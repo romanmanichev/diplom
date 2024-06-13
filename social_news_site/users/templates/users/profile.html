@@ -1,0 +1,99 @@
+{% extends "users/base.html" %}
+{% load spurl %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="content">
+
+    <div class="container">
+        
+        <div class="profile">
+        
+            <div class="profile__change__photo">
+                {% if user.photo %}
+                    <img class="profile__photo" src="{{ user.photo.url }}">
+                {%  else %}
+                <img class="profile__photo" src="{{ default_photo }}">
+                {% endif %}
+                <form id="change_photo" enctype="multipart/form-data" method="POST">
+                    {% csrf_token %}
+                    <input type="file" name="photo" id="id_photo" hidden>
+                    <button class="btn profile__change__photo__button">Изменить фото</button>
+                </form>
+            </div>
+        
+            <div class="profile__data">
+                <div class="profile__nick">Логин: {{ user.username }}</div>
+                <div class="profile__register">Регистрация: {{ user.date_joined|date:"Y-m-d" }}</div>
+                <div class="profile__lastEntry">Последний раз заходил(а): {{ user.last_login|date:"Y-m-d" }}</div>
+                <div>Количество сообщений: {{ user.message_count }}</div>
+                </form>   
+            </div>
+        </div> <!-- /.profile -->
+        
+        <div class="profile__themes">
+            <div class="profile__title">Мой темы</div>
+
+            
+            
+            <div style="text-align: center;">
+
+                {% if themes.has_other_pages %}
+
+                    {% if themes.has_previous %}
+                        <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ themes.previous_page_number }}' %}" class="btn">&lt;</a>
+                    {% endif %}
+
+                    {% for p in themes.paginator.page_range %}
+                        {% if themes.number == p %}
+                            <a class="btn" style="background-color: #ccc;" href="?page={{ p }}">{{ p }}</a>
+                        {% elif p >= themes.number|add:-2 and p <= themes.number|add:2 %}
+                        <a class="btn" href="?page={{ p }}">{{ p }}</a>
+                        {% endif %}
+                        
+                    {% endfor %}
+
+                    {% if themes.has_next %}
+                        <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ themes.next_page_number }}' %}" class="btn">&gt;</a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+
+            <div class="search__results">
+
+                {% if themes %}
+                    {% for article in themes %}
+
+                        <div class="theme">
+
+                            <div class="theme__info">
+                                <div>{{ article.time_create|date:"Y-m-d" }}</div>
+                                <div>Количество ответов: {{ article.count }}</div>
+                            </div>
+
+                            <div class="theme__content">
+                                {{ article.title|truncatechars:60 }}
+                                <a href="{{ article.get_absolute_url }}" class="btn">открыть</a>
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                {% else %}
+                        <div style="margin-top: 70px; font-size: 23px; text-align: center;">Отсутствуют</div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div> <!-- /.container -->
+</div> <!-- /.content -->
+
+{% endblock %}

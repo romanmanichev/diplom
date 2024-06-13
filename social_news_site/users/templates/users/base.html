@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200">
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'users/assets/favicon.ico' %}"/>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <header>
+
+        <div class="container">
+
+            <div class="header__menu">
+                <div class="header__inner">
+                    <a href="{% url 'index' %}"><img src="{% static 'users/assets/logo.png' %}" width="62px" height="60px" alt="site logo"></a>
+                    <span class="header__title">Социально Новостной Сайт</span>
+
+                </div>
+
+                <div class="header__nav">
+
+                    {% if user.is_authenticated %}
+
+                    <div class="header__nav__link">
+                        <a href="{% url 'create' %}" class="btn" style="margin-right: 20px;">Создать тему</a>
+                    </div>
+
+                    <div class="header__nav__link">
+                        <a class="header__nav__nick" href="{% url 'profile' %}">{{ user.username }}</a> |
+                    </div>
+                    <div class="header__nav__link">
+                        <form method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">Выйти</button>
+                        </form>
+                    </div>
+
+                    {% else %}                        
+                        <div class="header__nav__link">
+                            <div class="btn signin">Войти</div>
+                        </div>
+                        <div class="header__nav__link">
+                            <div class="btn signup">Зарегистрироваться</div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div> <!-- /.container -->
+    </header>
+
+    <div class="modal__signup">
+
+        <div class="modal__content">
+            <div class="modal__signup__close">x</div>
+            <div class="modal__title">Регистрация</div>
+            <div class="modal__errors"></div>
+
+            <form id="register__form" method="POST" action="{% url 'register' %}">
+                {% for f in RegisterForm %}
+                    <div class="inner__form">
+                        <p>{{ f }}</p>
+                        <label class="form__error {{ f.name }}"></label>
+                    </div>
+                {% endfor %}
+                {% csrf_token %}
+                <button class="btn" type="submit">Зарегистрироваться</button>
+            </form>
+        </div>
+        
+    </div> <!-- /.modal__signup --> 
+
+    <div class="modal__signin">
+
+            <form action="{% url 'login' %}" class="modal__content" id="login__form" method="POST">
+                <div class="modal__signin__close">x</div>
+                <div class="modal__title">Авторизация</div>
+                <div class="modal__errors"></div>
+                {% for f in LoginForm %}
+                    <div class="inner__form">
+                        <p>{{ f }}</p>
+                        <label class="form__error {{ f.name }}"></label>
+                    </div>
+                    <label class="form__error {{ f.name }}"></label>
+                {% endfor %}
+
+                {% csrf_token %}
+                <button class="btn" type="submit">Войти</button>
+            </form>
+        
+    </div> <!-- /.modal__signin --> 
+
+
+        {% block content %}{% endblock %}
+
+    <script src="{% static 'users/scripts/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'users/scripts/main.js' %}"></script>
+    <script src="{% static 'users/scripts/run_prettify.js' %}"></script>
+</body>
+</html>

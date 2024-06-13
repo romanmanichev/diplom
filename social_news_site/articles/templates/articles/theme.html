@@ -1,0 +1,109 @@
+{% extends "users/base.html" %}
+{% load spurl %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+    <div class="content">
+
+        <div class="container">
+
+            <div class="reply__title">
+                <div>{{ article.title }}</div>
+                <div class="reply__title__sup">Создано: {{ article.time_create }}, Всего сообщений: {{ sum_of_articles.count }}, Автор: {{ article.author }}</div>
+            </div>
+
+            {% if articlesContent.has_other_pages %}
+                <div style="margin: 20px 0; text-align: center;">
+
+                    {% if articlesContent.has_previous %}
+                        <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ articlesContent.previous_page_number }}' %}" class="btn">&lt;</a>
+                    {% endif %}
+
+                    {% for p in articlesContent.paginator.page_range %}
+
+                        {% if articlesContent.number == p %}
+                            <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn" style="background-color: #ccc;">{{ p }}</a>
+                        {% elif p >= articlesContent.number|add:-2 and p <= articlesContent.number|add:2 %}
+                            <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn">{{ p }}</a>
+                        {% endif %}
+                        
+                    {% endfor %}
+
+                    {% if articlesContent.has_next %}
+                        <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ articlesContent.next_page_number }}' %}" class="btn">&gt;</a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
+            {% for article in articlesContent %}
+
+                <div class="reply">
+                    <div class="reply__user">
+                        {% if article.user.photo %}
+                            <img src="{{ article.user.photo.url }}" width="100" height="100" alt="аватар">
+                        {% else %}
+                            <img src="{{ default_photo }}" width="100" height="100" alt="аватар">
+                        {% endif %}
+                        <div style="font-size: 25px;">{{ article.user }}</div>
+                        <div style="font-size: 13px;">Регистрация: {{ article.user.date_joined|date:"Y-m-d" }}</div>
+                        <div style="font-size: 13px;">ообщений: {{ article.user.message_count }}</div>
+                    </div>
+                    <div class="reply__content">
+
+                        {{ article.text }}
+                        {% if article.code %}
+                        <div>
+                            <code>
+                                <pre class="prettyprint" style="white-space: pre-wrap;">{{ article.code }}</pre>
+                            </code>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% if user.is_authenticated %}
+            <form class="add" method="POST">
+                {% csrf_token %}
+                <textarea name="content" maxlength="1000" class="add__content"></textarea>
+                <div>Код:</div>
+                <textarea name="code" maxlength="1000" class="add__code"></textarea>
+                <button class="btn">Отправить</button>
+            </form>
+            {% endif %}
+
+            {% if articlesContent.has_other_pages %}
+                <div style="margin: 20px 0; text-align: center;">
+
+                    {% if articlesContent.has_previous %}
+                        <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ articlesContent.previous_page_number }}' %}" class="btn">&lt;</a>
+                    {% endif %}
+
+                    {% for p in articlesContent.paginator.page_range %}
+
+                        {% if articlesContent.number == p %}
+                            <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn" style="background-color: #ccc;">{{ p }}</a>
+                        {% elif p >= articlesContent.number|add:-2 and p <= articlesContent.number|add:2 %}
+                            <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ p }}' %}" class="btn">{{ p }}</a>
+                        {% endif %}
+                        
+                    {% endfor %}
+
+                    {% if articlesContent.has_next %}
+                        <a href="{% spurl path=request.get_full_path query=request.GET set_query='page={{ articlesContent.next_page_number }}' %}" class="btn">&gt;</a>
+                    {% endif %}
+
+                </div>
+            {% else %}
+                
+            {% endif %}
+                
+        </div>
+    </div> <!-- /.content -->
+
+{% endblock %}

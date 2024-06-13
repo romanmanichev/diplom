@@ -1,0 +1,16 @@
+{% extends "users/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+<div class="content">
+
+    <div class="container">
+        
+        <h3 style="text-align: center;">Вы успешно зарегистрировались на сайте. Перейти на <a href="{% url 'index' %}">главную страницу</a></h3>
+
+    </div>
+</div>
+{% endblock %}

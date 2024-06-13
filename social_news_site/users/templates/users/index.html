@@ -1,0 +1,32 @@
+{% extends "users/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+<div class="content">
+
+    <div class="container">
+        <div class="content__title">Поиск на сайте</div>
+            <form class="content__inner" method="POST">
+                {% csrf_token %}
+                <input name="search" type="search" class="content__search">
+                <button class="btn">Поиск</button>
+            </form>
+
+        <div class="content__search__category">
+            <div class="content__search__title">Искать по категории</div>
+            <div class="content__category__line">
+
+                {% for c in categories %}
+                    <a class="content__search__item" href="{% url 'search' %}?cat={{ c.pk }}">{{ c.name }}</a>
+                {% endfor %}
+                
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
